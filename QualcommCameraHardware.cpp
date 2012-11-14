@@ -73,7 +73,6 @@ extern "C" {
 #include <jpeg_encoder.h>
 #endif
 
-typedef int liveshot_status;
 #define LIVESHOT_SUCCESS 0
 
 #define DUMP_LIVESHOT_JPEG_FILE 0
@@ -251,6 +250,7 @@ static int PICTURE_SIZE_COUNT = sizeof(picture_sizes)/sizeof(camera_size_type);
 static const camera_size_type * picture_sizes_ptr;
 static int supportedPictureSizesCount;
 static liveshotState liveshot_state = LIVESHOT_DONE;
+static int sensor_rotation = 0;
 
 #ifdef Q12
 #undef Q12
@@ -662,13 +662,11 @@ static void dump_dimensions(cam_ctrl_dimension_t *t)
     PRINT_VAL(rdi0_format);
     PRINT_VAL(rdi1_format);
 #endif
-#if 0
     PRINT_VAL(prev_padding_format);
+#if 0
     PRINT_VAL(enc_padding_format);
     PRINT_VAL(thumb_padding_format);
     PRINT_VAL(main_padding_format);
-#else
-    PRINT_VAL(filler1);
 #endif
     PRINT_VAL(display_luma_width);
     PRINT_VAL(display_luma_height);
@@ -946,7 +944,7 @@ extern "C" {
 //   : 720p busyQ funcitons
 //   --------------------------------------------------------------------
 static struct fifo_queue g_busy_frame_queue =
-    {0, 0, 0, PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER};
+    {0, 0, 0, PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER, "frame_queue"};
 };
 /*===========================================================================
  * FUNCTION      cam_frame_wait_video
@@ -3032,21 +3030,10 @@ bool QualcommCameraHardware::initPreview()
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
-        frame_parms.frame = frames[kPreviewBufferCount - 1];
-
-        if( mCurrentTarget == TARGET_MSM7630 || mCurrentTarget == TARGET_QSD8250 || mCurrentTarget == TARGET_MSM8660)
-            frame_parms.video_frame =  recordframes[kPreviewBufferCount - 1];
-        else
-            frame_parms.video_frame =  frames[kPreviewBufferCount - 1];
-
-        LOGV ("initpreview before cam_frame thread carete , video frame  buffer=%lu fd=%d y_off=%d cbcr_off=%d frame_parms=%p\n",
-            (unsigned long)frame_parms.video_frame.buffer, frame_parms.video_frame.fd, frame_parms.video_frame.y_off,
-            frame_parms.video_frame.cbcr_off, &frame_parms);
-
         mFrameThreadRunning = !pthread_create(&mFrameThread,
                                               &attr,
                                               frame_thread,
-                                              /*(void*)&(frame_parms)*/NULL);
+                                              NULL);
         ret = mFrameThreadRunning;
         mFrameThreadWaitLock.unlock();
     }
@@ -4803,14 +4790,13 @@ status_t QualcommCameraHardware::setDIS() {
 status_t QualcommCameraHardware::setVpeParameters()
 {
     LOGV("setVpeParameters E");
-#if 0
     video_rotation_param_ctrl_t rotCtrl;
-#endif
+
     bool ret = true;
-#if 0
+
     LOGV("videoWidth = %d, videoHeight = %d", videoWidth, videoHeight);
 
-    int rotation = (mRotation + sensor_rotation)%360;
+    int rotation = (mRotation + sensor_rotation) % 360;
     rotCtrl.rotation = (rotation == 0) ? ROT_NONE :
                        ((rotation == 90) ? ROT_CLOCKWISE_90 :
                   ((rotation == 180) ? ROT_CLOCKWISE_180 : ROT_CLOCKWISE_270));
@@ -4828,7 +4814,7 @@ status_t QualcommCameraHardware::setVpeParameters()
 
     ret = native_set_parm(CAMERA_SET_VIDEO_ROT_PARAMS,
                            sizeof(rotCtrl), &rotCtrl);
-#endif
+
     LOGV("setVpeParameters X (%d)", ret);
     return ret ? NO_ERROR : UNKNOWN_ERROR;
 }
@@ -6300,12 +6286,11 @@ status_t QualcommCameraHardware::setRotation(const CameraParameters& params)
 {
     status_t rc = NO_ERROR;
     LOGV("%s E", __FUNCTION__);
-    int sensor_mount_angle = HAL_cameraInfo[HAL_currentCameraId].sensor_mount_angle;
     int rotation = params.getInt(CameraParameters::KEY_ROTATION);
     if (rotation != NOT_FOUND) {
         if (rotation == 0 || rotation == 90 || rotation == 180
             || rotation == 270) {
-          rotation = (rotation + sensor_mount_angle)%360;
+          rotation = (rotation + sensor_rotation)%360;
           mParameters.set(CameraParameters::KEY_ROTATION, rotation);
           mRotation = rotation;
         } else {
@@ -7117,6 +7102,7 @@ extern "C" void HAL_getCameraInfo(int cameraId, struct CameraInfo* cameraInfo)
                 cameraInfo->orientation = ((APP_ORIENTATION - HAL_cameraInfo[i].sensor_mount_angle) + 360)%360;
 
             LOGI("%s: orientation = %d", __FUNCTION__, cameraInfo->orientation);
+            sensor_rotation = HAL_cameraInfo[i].sensor_mount_angle;
             cameraInfo->mode = 0;
             if(HAL_cameraInfo[i].modes_supported & CAMERA_MODE_2D)
                 cameraInfo->mode |= CAMERA_SUPPORT_MODE_2D;

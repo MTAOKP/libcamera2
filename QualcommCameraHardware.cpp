@@ -123,7 +123,7 @@ const struct camera_size_type *(*LINK_default_sensor_get_snapshot_sizes)(int *le
 int (*LINK_launch_cam_conf_thread)(void);
 int (*LINK_release_cam_conf_thread)(void);
 mm_camera_status_t (*LINK_mm_camera_init)(mm_camera_config *, mm_camera_notify*, mm_camera_ops*);
-mm_camera_status_t (*LINK_mm_camera_deinit)(mm_camera_config *, mm_camera_notify*, mm_camera_ops*);
+mm_camera_status_t (*LINK_mm_camera_deinit)();
 int8_t (*LINK_zoom_crop_upscale)(uint32_t width, uint32_t height,
     uint32_t cropped_width, uint32_t cropped_height, uint8_t *img_buf);
 

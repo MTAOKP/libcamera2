@@ -236,8 +236,25 @@ board_property boardProperties[] = {
  * to be changed once the API is supported.
  */
 //sorted on column basis
-static camera_size_type* picture_sizes;
-static unsigned int PICTURE_SIZE_COUNT;
+static const camera_size_type picture_sizes[] = {
+    { 4000, 3000 }, // 12MP
+    { 3200, 2400 }, // 8MP
+    { 2592, 1944 }, // 5MP
+    { 2048, 1536 }, // 3MP QXGA
+    { 1920, 1080 }, //HD1080
+    { 1600, 1200 }, // 2MP UXGA
+    { 1280, 1024 }, //SXGA
+    { 1280, 768 }, //WXGA
+    { 1280, 720 }, //HD720
+    { 1024, 768}, // 1MP XGA
+    { 800, 600 }, //SVGA
+    { 800, 480 }, // WVGA
+    { 640, 480 }, // VGA
+    { 352, 288 }, //CIF
+    { 320, 240 }, // QVGA
+    { 176, 144 } // QCIF
+};
+static int PICTURE_SIZE_COUNT = sizeof(picture_sizes)/sizeof(camera_size_type);
 static const camera_size_type * picture_sizes_ptr;
 static int supportedPictureSizesCount;
 static liveshotState liveshot_state = LIVESHOT_DONE;
@@ -1876,13 +1893,14 @@ bool QualcommCameraHardware::startCamera()
         LOGI("%s: camsensor name %s, flash %d", __FUNCTION__,
              mSensorInfo.name, mSensorInfo.flash_enabled);
 
+/* Disable and use hardcoded values for now
     mCfgControl.mm_camera_query_parms(CAMERA_PARM_PICT_SIZE, (void **)&picture_sizes, &PICTURE_SIZE_COUNT);
     if (!picture_sizes || !PICTURE_SIZE_COUNT) {
         LOGE("startCamera X: could not get snapshot sizes");
         return false;
     }
     LOGV("startCamera picture_sizes %p PICTURE_SIZE_COUNT %d", picture_sizes, PICTURE_SIZE_COUNT);
-
+*/
     LOGV("startCamera X");
     return true;
 }

@@ -1449,7 +1449,6 @@ void QualcommCameraHardware::initDefaultParameters()
         parameter_string_initialized = true;
     }
 
-    mParameters.setVideoSize(DEFAULT_PICTURE_WIDTH, DEFAULT_PICTURE_HEIGHT);
     mParameters.setPreviewSize(DEFAULT_PREVIEW_WIDTH, DEFAULT_PREVIEW_HEIGHT);
     mDimension.display_width = DEFAULT_PREVIEW_WIDTH;
     mDimension.display_height = DEFAULT_PREVIEW_HEIGHT;
@@ -1537,9 +1536,6 @@ void QualcommCameraHardware::initDefaultParameters()
     }
 
     mParameters.set(CameraParameters::KEY_SUPPORTED_PREVIEW_SIZES,
-                    preview_size_values.string());
-
-    mParameters.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES,
                     preview_size_values.string());
 
     mParameters.set(CameraParameters::KEY_SUPPORTED_PICTURE_SIZES,
@@ -2545,14 +2541,14 @@ bool QualcommCameraHardware::native_jpeg_encode(void)
       addExifTag(EXIFTAGID_EXIF_DATE_TIME_ORIGINAL, EXIF_ASCII,
                   20, 1, (void *)dateTime);
     }
-#if 0
+
     int focalLengthValue = (int) (mParameters.getFloat(
                 CameraParameters::KEY_FOCAL_LENGTH) * FOCAL_LENGTH_DECIMAL_PRECISON);
     rat_t focalLengthRational = {focalLengthValue, FOCAL_LENGTH_DECIMAL_PRECISON};
     memcpy(&focalLength, &focalLengthRational, sizeof(focalLengthRational));
     addExifTag(EXIFTAGID_FOCAL_LENGTH, EXIF_RATIONAL, 1,
                 1, (void *)&focalLength);
-#endif
+
     uint8_t * thumbnailHeap = NULL;
     int thumbfd = -1;
 
@@ -3614,7 +3610,7 @@ status_t QualcommCameraHardware::startPreviewInternal()
         LINK_cam_frame_flush_free_video();
         mPreviewInitialized = false;
         mOverlayLock.lock();
-        //mOverlay = NULL; /* do not NULL overlay */
+        mOverlay = NULL;
         mOverlayLock.unlock();
         LOGE("startPreview X: native_start_preview failed!");
         return UNKNOWN_ERROR;
@@ -4315,7 +4311,6 @@ status_t QualcommCameraHardware::setHistogramOff()
 
 status_t QualcommCameraHardware::runFaceDetection()
 {
-#if 0
     bool ret = true;
 
     const char *str = mParameters.get(CameraParameters::KEY_FACE_DETECTION);
@@ -4350,7 +4345,6 @@ status_t QualcommCameraHardware::runFaceDetection()
         return ret ? NO_ERROR : UNKNOWN_ERROR;
     }
     LOGE("Invalid Face Detection value: %s", (str == NULL) ? "NULL" : str);
-#endif
     return BAD_VALUE;
 }
 
@@ -4792,8 +4786,8 @@ void QualcommCameraHardware::receivePreviewFrame(struct msm_frame *frame)
                 }
             }
             memcpy((uint32_t *)mMetaDataHeap->mHeap->base(), (uint32_t *)array, (sizeof(int)*(MAX_ROI*4+1)));
-            if  (mcb != NULL && (msgEnabled & CAMERA_MSG_META_DATA)) {
-                mcb(CAMERA_MSG_META_DATA, mMetaDataHeap->mBuffers[0], mdata);
+            if  (mcb != NULL && (msgEnabled & CAMERA_MSG_PREVIEW_METADATA)) {
+                mcb(CAMERA_MSG_PREVIEW_METADATA, mMetaDataHeap->mBuffers[0], mdata);
             }
         }
         mMetaDataWaitLock.unlock();
@@ -7032,7 +7026,7 @@ bool QualcommCameraHardware::useOverlay(void)
     LOGV("%s E", __FUNCTION__);
     if((mCurrentTarget == TARGET_MSM7630) || (mCurrentTarget == TARGET_MSM8660)) {
         /* 7x30 and 8x60 supports Overlay */
-        mUseOverlay = TRUE; /* TODO: consider disabling to workaround overlay stuff */
+        mUseOverlay = TRUE;
     } else
         mUseOverlay = FALSE;
 

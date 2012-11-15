@@ -4327,44 +4327,44 @@ status_t QualcommCameraHardware::setHistogramOff()
     return NO_ERROR;
 }
 
-status_t QualcommCameraHardware::runFaceDetection()
-{
-    bool ret = true;
-
-    const char *str = mParameters.get(CameraParameters::KEY_FACE_DETECTION);
-    if (str != NULL) {
-        int value = attr_lookup(facedetection,
-                sizeof(facedetection) / sizeof(str_map), str);
-
-        mMetaDataWaitLock.lock();
-        if (value == true) {
-            if(mMetaDataHeap != NULL)
-                mMetaDataHeap.clear();
-
-            mMetaDataHeap =
-                new AshmemPool((sizeof(int)*(MAX_ROI*4+1)),
-                        1,
-                        (sizeof(int)*(MAX_ROI*4+1)),
-                        "metadata");
-            if (!mMetaDataHeap->initialized()) {
-                LOGE("Meta Data Heap allocation failed ");
-                mMetaDataHeap.clear();
-                LOGE("runFaceDetection X: error initializing mMetaDataHeap");
-                mMetaDataWaitLock.unlock();
-                return UNKNOWN_ERROR;
-            }
-            mSendMetaData = true;
-        } else {
-            if(mMetaDataHeap != NULL)
-                mMetaDataHeap.clear();
-        }
-        mMetaDataWaitLock.unlock();
-        ret = native_set_parm(CAMERA_PARM_FD, sizeof(int8_t), (void *)&value);
-        return ret ? NO_ERROR : UNKNOWN_ERROR;
-    }
-    LOGE("Invalid Face Detection value: %s", (str == NULL) ? "NULL" : str);
-    return BAD_VALUE;
-}
+//status_t QualcommCameraHardware::runFaceDetection()
+//{
+//    bool ret = true;
+//
+//    const char *str = mParameters.get(CameraParameters::KEY_FACE_DETECTION);
+//    if (str != NULL) {
+//        int value = attr_lookup(facedetection,
+//                sizeof(facedetection) / sizeof(str_map), str);
+//
+//        mMetaDataWaitLock.lock();
+//        if (value == true) {
+//            if(mMetaDataHeap != NULL)
+//                mMetaDataHeap.clear();
+//
+//            mMetaDataHeap =
+//                new AshmemPool((sizeof(int)*(MAX_ROI*4+1)),
+//                        1,
+//                        (sizeof(int)*(MAX_ROI*4+1)),
+//                        "metadata");
+//            if (!mMetaDataHeap->initialized()) {
+//                LOGE("Meta Data Heap allocation failed ");
+//                mMetaDataHeap.clear();
+//                LOGE("runFaceDetection X: error initializing mMetaDataHeap");
+//                mMetaDataWaitLock.unlock();
+//                return UNKNOWN_ERROR;
+//            }
+//            mSendMetaData = true;
+//        } else {
+//            if(mMetaDataHeap != NULL)
+//                mMetaDataHeap.clear();
+//        }
+//        mMetaDataWaitLock.unlock();
+//        ret = native_set_parm(CAMERA_PARM_FD, sizeof(int8_t), (void *)&value);
+//        return ret ? NO_ERROR : UNKNOWN_ERROR;
+//    }
+//    LOGE("Invalid Face Detection value: %s", (str == NULL) ? "NULL" : str);
+//    return BAD_VALUE;
+//}
 
 status_t QualcommCameraHardware::sendCommand(int32_t command, int32_t arg1,
                                              int32_t arg2)
@@ -4379,15 +4379,15 @@ status_t QualcommCameraHardware::sendCommand(int32_t command, int32_t arg1,
                                         LOGI("face detection support is not available");
                                         return NO_ERROR;
                                    }
-                                   setFaceDetection("on");
-                                   return runFaceDetection();
+//                                   setFaceDetection("on");
+//                                   return runFaceDetection();
       case CAMERA_CMD_STOP_FACE_DETECTION:
                                    if(supportsFaceDetection() == false){
                                         LOGI("face detection support is not available");
                                         return NO_ERROR;
                                    }
-                                   setFaceDetection("off");
-                                   return runFaceDetection();
+//                                  setFaceDetection("off");
+//                                   return runFaceDetection();
       case CAMERA_CMD_HISTOGRAM_ON:
                                    LOGV("histogram set to on");
                                    return setHistogramOn();
@@ -7360,4 +7360,3 @@ extern "C" sp<CameraHardwareInterface> HAL_openCameraHardware(int cameraId)
 }
 
 }; // namespace android
-

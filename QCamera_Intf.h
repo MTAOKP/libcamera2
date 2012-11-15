@@ -1349,7 +1349,9 @@ int is_camstats_thread_running(void);
 
 /* cam frame*/
 typedef struct {
-  cam_preview_mode_t m;
+  unsigned int unknown;
+  struct msm_frame frame;
+  struct msm_frame video_frame;
 } cam_frame_start_parms;
 
 int launch_camframe_thread(cam_frame_start_parms* parms);

@@ -245,18 +245,21 @@ public:
 
     void receivePreviewFrame(struct msm_frame *frame);
     void receiveLiveSnapshot(uint32_t jpeg_size);
+    void receiveCameraStats(camstats_type stype, camera_preview_histogram_info* histinfo);
     void receiveRecordingFrame(struct msm_frame *frame);
     void receiveJpegPicture(void);
     void jpeg_set_location();
     void receiveJpegPictureFragment(uint8_t *buf, uint32_t size);
     void notifyShutter(common_crop_t *crop, bool mPlayShutterSoundOnly);
-    void receive_camframetimeout();
+    void receive_camframe_error_timeout();
     static void getCameraInfo();
 
 private:
     QualcommCameraHardware();
     virtual ~QualcommCameraHardware();
     status_t startPreviewInternal();
+    status_t setHistogramOn();
+    status_t setHistogramOff();
     status_t runFaceDetection();
     status_t setFaceDetection(const char *str);
 
@@ -360,6 +363,7 @@ private:
     sp<PmemPool> mRawHeap;
     sp<PmemPool> mDisplayHeap;
     sp<AshmemPool> mJpegHeap;
+    sp<AshmemPool> mStatHeap;
     sp<AshmemPool> mMetaDataHeap;
     sp<PmemPool> mRawSnapShotPmemHeap;
     sp<PmemPool> mPostViewHeap;
@@ -390,6 +394,13 @@ private:
     Condition mVideoThreadWait;
     friend void *video_thread(void *user);
     void runVideoThread(void *data);
+
+    // For Histogram
+    int mStatsOn;
+    int mCurrent;
+    bool mSendData;
+    Mutex mStatsWaitLock;
+    Condition mStatsWait;
 
     //For Face Detection
     int mFaceDetectOn;
@@ -494,6 +505,7 @@ private:
     int                 mRawSize;
     int                 mCbCrOffsetRaw;
     int                 mJpegMaxSize;
+    int32_t             mStatSize;
 
 #if DLOPEN_LIBMMCAMERA
     void *libmmcamera;
@@ -535,6 +547,8 @@ private:
     int kPreviewBufferCountActual;
     int previewWidth, previewHeight;
     bool mSnapshotDone;
+    bool mSnapshotPrepare;
+    mm_camera_config mCfgControl;
     bool mHasAutoFocusSupport;
     int videoWidth, videoHeight;
 

@@ -5737,7 +5737,7 @@ status_t QualcommCameraHardware::setPreviewFrameRate(const CameraParameters& par
 
 status_t QualcommCameraHardware::setPreviewFrameRateMode(const CameraParameters& params) {
      if((!strcmp(sensorType->name, "2mp")) ||
-        (!strcmp(sensorType->name, "mt9m113")) ||
+        (!strcmp(sensorType->name, "5mp")) ||
         (!strcmp(sensorType->name, "ov7692"))){
         LOGI("set fps is not supported for this sensor");
         return NO_ERROR;
@@ -5947,7 +5947,7 @@ status_t QualcommCameraHardware::setSharpness(const CameraParameters& params)
 status_t QualcommCameraHardware::setContrast(const CameraParameters& params)
 {
     if((!strcmp(sensorType->name, "2mp")) ||
-        (!strcmp(sensorType->name, "mt9m113")) ||
+        (!strcmp(sensorType->name, "5mp")) ||
         (!strcmp(sensorType->name, "ov7692"))) {
         LOGE("Contrast not supported for this sensor");
         return NO_ERROR;
@@ -6162,7 +6162,7 @@ status_t QualcommCameraHardware::setLensshadeValue(const CameraParameters& param
 {
     if( (!strcmp(sensorType->name, "2mp")) ||
         (!strcmp(sensorType->name, "ov7692")) ||
-        (!strcmp(sensorType->name, "mt9m113")) ||
+        (!strcmp(sensorType->name, "5mp")) ||
         (!strcmp(sensorType->name, "12mp")) ||
         (!strcmp(mSensorInfo.name, "vx6953")) ||
         (!strcmp(mSensorInfo.name, "VX6953")) ) {
@@ -6228,6 +6228,10 @@ status_t QualcommCameraHardware::setSelectableZoneAf(const CameraParameters& par
 status_t QualcommCameraHardware::setTouchAfAec(const CameraParameters& params)
 {
     /* Don't know the AEC_ROI_* values */
+    if((!strcmp(sensorType->name, "5mp"))) {
+        LOGI("Parameter TouchAfAec is not supported for this sensor");
+        return NO_ERROR;
+    }
     if(mHasAutoFocusSupport){
         int xAec, yAec, xAf, yAf;
 
@@ -6365,7 +6369,7 @@ status_t QualcommCameraHardware::setSceneDetect(const CameraParameters& params)
     bool retParm1, retParm2;
     if (supportsSceneDetection()) {
         if((!strcmp(sensorType->name, "2mp")) ||
-	   (!strcmp(sensorType->name, "mt9m113")) ||
+	   (!strcmp(sensorType->name, "5mp")) ||
 	   (!strcmp(sensorType->name, "ov7692"))) {
             LOGI("Parameter Auto Scene Detection is not supported for this sensor");
             return NO_ERROR;
@@ -6403,7 +6407,7 @@ status_t QualcommCameraHardware::setSceneDetect(const CameraParameters& params)
 status_t QualcommCameraHardware::setSceneMode(const CameraParameters& params)
 {
     if((!strcmp(sensorType->name, "2mp")) ||
-       (!strcmp(sensorType->name, "mt9m113")) ||
+       (!strcmp(sensorType->name, "5mp")) ||
        (!strcmp(sensorType->name, "ov7692"))) {
         LOGI("Parameter Scenemode not supported for this sensor");
         return NO_ERROR;

@@ -1071,6 +1071,7 @@ static void cam_frame_post_video (struct msm_frame *p)
 void QualcommCameraHardware::storeTargetType(void) {
     char mDeviceName[PROPERTY_VALUE_MAX];
     property_get("ro.board.platform",mDeviceName," ");
+    LOGV("Searching for target type %s", mDeviceName);
     mCurrentTarget = TARGET_MAX;
     for( int i = 0; i < TARGET_MAX ; i++) {
         if( !strncmp(mDeviceName, targetList[i].targetStr, 7)) {
@@ -1078,7 +1079,6 @@ void QualcommCameraHardware::storeTargetType(void) {
             break;
         }
     }
-    mCurrentTarget=TARGET_MSM8660;
     LOGV(" Storing the current target type as %d ", mCurrentTarget );
     return;
 }

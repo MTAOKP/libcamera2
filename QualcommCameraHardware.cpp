@@ -270,7 +270,7 @@ static const target_map targetList [] = {
     { "msm7625", TARGET_MSM7625 },
     { "msm7627", TARGET_MSM7627 },
     { "qsd8250", TARGET_QSD8250 },
-    { "msm7630", TARGET_MSM7630 },
+    { "msm7x30", TARGET_MSM7630 },
     { "msm8660", TARGET_MSM8660 }
 };
 static targetType mCurrentTarget = TARGET_MAX;

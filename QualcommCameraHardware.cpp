@@ -5654,7 +5654,7 @@ status_t QualcommCameraHardware::setRecordSize(const CameraParameters& params)
             }
         } else {
             mParameters.set(CameraParameters::KEY_VIDEO_SIZE, "");
-            LOGE("initPreview X: failed to parse parameter record-size (%s)", recordSize);
+            LOGE("setRecordSize X: failed to parse parameter record-size (%s)", recordSize);
             return BAD_VALUE;
         }
     }
@@ -5688,6 +5688,7 @@ status_t QualcommCameraHardware::setPreviewSize(const CameraParameters& params)
     LOGE("Invalid preview size requested: %dx%d", width, height);
     return BAD_VALUE;
 }
+
 status_t QualcommCameraHardware::setPreviewFpsRange(const CameraParameters& params)
 {
     int minFps,maxFps;
@@ -5701,6 +5702,7 @@ status_t QualcommCameraHardware::setPreviewFpsRange(const CameraParameters& para
             return NO_ERROR;
         }
     }
+    LOGE("Invalid FPS Range requested: %dx%d", minFps, maxFps);
     return BAD_VALUE;
 }
 
@@ -5779,6 +5781,7 @@ status_t QualcommCameraHardware::setJpegThumbnailSize(const CameraParameters& pa
            return NO_ERROR;
        }
     }
+    LOGV("Invalid jpeg thumbnail size %d x %d", width, height);
     return BAD_VALUE;
 }
 
@@ -5808,8 +5811,8 @@ status_t QualcommCameraHardware::setPictureSize(const CameraParameters& params)
         mDimension.picture_width = width;
         mDimension.picture_height = height;
         return NO_ERROR;
-    } else
-        LOGE("Invalid picture size requested: %dx%d", width, height);
+    }
+    LOGE("Invalid picture size requested: %dx%d", width, height);
     return BAD_VALUE;
 }
 
@@ -5843,15 +5846,15 @@ status_t QualcommCameraHardware::setEffect(const CameraParameters& params)
     if (str != NULL) {
         int32_t value = attr_lookup(effects, sizeof(effects) / sizeof(str_map), str);
         if (value != NOT_FOUND) {
-            if((!strcmp(sensorType->name, "2mp") ||
+           if((!strcmp(sensorType->name, "2mp") ||
                (!strcmp(sensorType->name, "mt9m113")) ||
                (!strcmp(sensorType->name, "ov7692")))
                && (value != CAMERA_EFFECT_OFF)
                &&(value != CAMERA_EFFECT_MONO) && (value != CAMERA_EFFECT_NEGATIVE)
                &&(value != CAMERA_EFFECT_SOLARIZE) && (value != CAMERA_EFFECT_SEPIA)) {
-                LOGE("Special effect parameter is not supported for this sensor");
-                return NO_ERROR;
-            }
+               LOGE("Special effect parameter is not supported for this sensor");
+               return NO_ERROR;
+           }
 
            if(((value == CAMERA_EFFECT_MONO) || (value == CAMERA_EFFECT_NEGATIVE)
            || (value == CAMERA_EFFECT_AQUA) || (value == CAMERA_EFFECT_SEPIA))
@@ -5895,6 +5898,7 @@ status_t QualcommCameraHardware::setExposureCompensation(
                                     sizeof(value), (void *)&value);
         return ret ? NO_ERROR : UNKNOWN_ERROR;
     }
+    LOGE("Invalid Exposure Compensation value");
     return BAD_VALUE;
 }
 
@@ -6394,8 +6398,8 @@ status_t QualcommCameraHardware::setSceneDetect(const CameraParameters& params)
                 return (retParm1 && retParm2) ? NO_ERROR : UNKNOWN_ERROR;
             }
         }
-    LOGE("Invalid auto scene detection value: %s", (str == NULL) ? "NULL" : str);
-    return BAD_VALUE;
+        LOGE("Invalid auto scene detection value: %s", (str == NULL) ? "NULL" : str);
+        return BAD_VALUE;
     }
     return NO_ERROR;
 }

@@ -7352,6 +7352,7 @@ extern "C" sp<CameraHardwareInterface> HAL_openCameraHardware(int cameraId)
 {
     int i;
     LOGI("openCameraHardware: call createInstance");
+    if (HAL_numOfCameras <= 0) QualcommCameraHardware::getCameraInfo();
     for(i = 0; i < HAL_numOfCameras; i++) {
         if(i == cameraId) {
             LOGI("openCameraHardware:Valid camera ID %d", cameraId);

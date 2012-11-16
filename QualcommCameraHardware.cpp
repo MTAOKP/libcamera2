@@ -7301,7 +7301,7 @@ void QualcommCameraHardware::getCameraInfo()
 /* Gingerbread API functions */
 extern "C" int HAL_getNumberOfCameras()
 {
-    QualcommCameraHardware::getCameraInfo();
+    if (HAL_numOfCameras <= 0) QualcommCameraHardware::getCameraInfo();
     return HAL_numOfCameras;
 }
 
@@ -7314,7 +7314,8 @@ extern "C" void HAL_getCameraInfo(int cameraId, struct CameraInfo* cameraInfo)
         return;
     }
 
-    property_get("ro.board.platform",mDeviceName," ");
+    property_get("ro.board.platform", mDeviceName, " ");
+    if (HAL_numOfCameras <= 0) QualcommCameraHardware::getCameraInfo();
 
     for(i = 0; i < HAL_numOfCameras; i++) {
         if(i == cameraId) {

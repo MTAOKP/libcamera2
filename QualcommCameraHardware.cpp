@@ -4202,53 +4202,54 @@ status_t QualcommCameraHardware::setParameters(const CameraParameters& params)
         if ((rc = setJpegQuality(params)))  final_rc = rc;
         return final_rc;
     }
+#define CHECK_RESULT if (final_rc) { LOGV("Param set error at line %d", __LINE__); final_rc = NO_ERROR }
 
-    if ((rc = setPreviewSize(params))) final_rc = rc;
-    if ((rc = setRecordSize(params)))  final_rc = rc;
-    if ((rc = setPictureSize(params)))  final_rc = rc;
-    if ((rc = setJpegThumbnailSize(params))) final_rc = rc;
-    if ((rc = setJpegQuality(params)))  final_rc = rc;
-    if ((rc = setPictureFormat(params))) final_rc = rc;
-    if ((rc = setRecordSize(params)))  final_rc = rc;
-    if ((rc = setPreviewFormat(params)))   final_rc = rc;
-    if ((rc = setEffect(params)))       final_rc = rc;
-    if ((rc = setGpsLocation(params)))  final_rc = rc;
-    if ((rc = setRotation(params)))     final_rc = rc;
-    if ((rc = setZoom(params)))         final_rc = rc;
-    if ((rc = setOrientation(params)))  final_rc = rc;
-    if ((rc = setLensshadeValue(params)))  final_rc = rc;
-    if ((rc = setPictureFormat(params))) final_rc = rc;
-    if ((rc = setSharpness(params)))    final_rc = rc;
-    if ((rc = setSaturation(params)))   final_rc = rc;
-    if ((rc = setContinuousAf(params)))  final_rc = rc;
-    if ((rc = setSelectableZoneAf(params)))   final_rc = rc;
-    if ((rc = setTouchAfAec(params)))   final_rc = rc;
-    if ((rc = setSceneMode(params)))    final_rc = rc;
-    if ((rc = setContrast(params)))     final_rc = rc;
-    if ((rc = setRecordSize(params)))  final_rc = rc;
-    if ((rc = setSceneDetect(params)))  final_rc = rc;
-    if ((rc = setStrTextures(params)))   final_rc = rc;
-    if ((rc = setPreviewFormat(params)))   final_rc = rc;
-    if ((rc = setSkinToneEnhancement(params)))   final_rc = rc;
-    if ((rc = setAntibanding(params)))  final_rc = rc;
-    if ((rc = setPreviewFpsRange(params)))  final_rc = rc;
+    if ((rc = setPreviewSize(params))) final_rc = rc; CHECK_RESULT;
+    if ((rc = setRecordSize(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setPictureSize(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setJpegThumbnailSize(params))) final_rc = rc; CHECK_RESULT;
+    if ((rc = setJpegQuality(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setPictureFormat(params))) final_rc = rc; CHECK_RESULT;
+    if ((rc = setRecordSize(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setPreviewFormat(params)))   final_rc = rc; CHECK_RESULT;
+    if ((rc = setEffect(params)))       final_rc = rc; CHECK_RESULT;
+    if ((rc = setGpsLocation(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setRotation(params)))     final_rc = rc; CHECK_RESULT;
+    if ((rc = setZoom(params)))         final_rc = rc; CHECK_RESULT;
+    if ((rc = setOrientation(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setLensshadeValue(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setPictureFormat(params))) final_rc = rc; CHECK_RESULT;
+    if ((rc = setSharpness(params)))    final_rc = rc; CHECK_RESULT;
+    if ((rc = setSaturation(params)))   final_rc = rc; CHECK_RESULT;
+    if ((rc = setContinuousAf(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setSelectableZoneAf(params)))   final_rc = rc; CHECK_RESULT;
+    if ((rc = setTouchAfAec(params)))   final_rc = rc; CHECK_RESULT;
+    if ((rc = setSceneMode(params)))    final_rc = rc; CHECK_RESULT;
+    if ((rc = setContrast(params)))     final_rc = rc; CHECK_RESULT;
+    if ((rc = setRecordSize(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setSceneDetect(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setStrTextures(params)))   final_rc = rc; CHECK_RESULT;
+    if ((rc = setPreviewFormat(params)))   final_rc = rc; CHECK_RESULT;
+    if ((rc = setSkinToneEnhancement(params)))   final_rc = rc; CHECK_RESULT;
+    if ((rc = setAntibanding(params)))  final_rc = rc; CHECK_RESULT;
+    if ((rc = setPreviewFpsRange(params)))  final_rc = rc; CHECK_RESULT;
 
     const char *str = params.get(CameraParameters::KEY_SCENE_MODE);
     int32_t value = attr_lookup(scenemode, sizeof(scenemode) / sizeof(str_map), str);
 
     if((value != NOT_FOUND) && (value == CAMERA_BESTSHOT_OFF)) {
-        if ((rc = setPreviewFrameRate(params))) final_rc = rc;
-        if ((rc = setPreviewFrameRateMode(params))) final_rc = rc;
-        if ((rc = setAutoExposure(params))) final_rc = rc;
-        if ((rc = setExposureCompensation(params))) final_rc = rc;
-        if ((rc = setWhiteBalance(params))) final_rc = rc;
-        if ((rc = setFlash(params)))        final_rc = rc;
-        if ((rc = setFocusMode(params)))    final_rc = rc;
-        if ((rc = setBrightness(params)))   final_rc = rc;
-        if ((rc = setISOValue(params)))  final_rc = rc;
+        if ((rc = setPreviewFrameRate(params))) final_rc = rc; CHECK_RESULT;
+        if ((rc = setPreviewFrameRateMode(params))) final_rc = rc; CHECK_RESULT;
+        if ((rc = setAutoExposure(params))) final_rc = rc; CHECK_RESULT;
+        if ((rc = setExposureCompensation(params))) final_rc = rc; CHECK_RESULT;
+        if ((rc = setWhiteBalance(params))) final_rc = rc; CHECK_RESULT;
+        if ((rc = setFlash(params)))        final_rc = rc; CHECK_RESULT;
+        if ((rc = setFocusMode(params)))    final_rc = rc; CHECK_RESULT;
+        if ((rc = setBrightness(params)))   final_rc = rc; CHECK_RESULT;
+        if ((rc = setISOValue(params)))  final_rc = rc; CHECK_RESULT;
     }
     //selectableZoneAF needs to be invoked after continuous AF
-    if ((rc = setSelectableZoneAf(params)))   final_rc = rc;
+    if ((rc = setSelectableZoneAf(params)))   final_rc = rc; CHECK_RESULT;
 
     LOGV("setParameters: X, ret: %d", final_rc);
     return final_rc;
@@ -5736,7 +5737,7 @@ status_t QualcommCameraHardware::setPreviewFrameRate(const CameraParameters& par
 
 status_t QualcommCameraHardware::setPreviewFrameRateMode(const CameraParameters& params) {
      if((!strcmp(sensorType->name, "2mp")) ||
-        (!strcmp(sensorType->name, "5mp")) ||
+        (!strcmp(sensorType->name, "5mp_triumph")) ||
         (!strcmp(sensorType->name, "ov7692"))){
         LOGI("set fps is not supported for this sensor");
         return NO_ERROR;
@@ -5948,7 +5949,7 @@ status_t QualcommCameraHardware::setSharpness(const CameraParameters& params)
 status_t QualcommCameraHardware::setContrast(const CameraParameters& params)
 {
     if((!strcmp(sensorType->name, "2mp")) ||
-        (!strcmp(sensorType->name, "5mp")) ||
+        (!strcmp(sensorType->name, "5mp_triumph")) ||
         (!strcmp(sensorType->name, "ov7692"))) {
         LOGE("Contrast not supported for this sensor");
         return NO_ERROR;
@@ -6163,7 +6164,7 @@ status_t QualcommCameraHardware::setLensshadeValue(const CameraParameters& param
 {
     if( (!strcmp(sensorType->name, "2mp")) ||
         (!strcmp(sensorType->name, "ov7692")) ||
-        (!strcmp(sensorType->name, "5mp")) ||
+        (!strcmp(sensorType->name, "5mp_triumph")) ||
         (!strcmp(sensorType->name, "12mp")) ||
         (!strcmp(mSensorInfo.name, "vx6953")) ||
         (!strcmp(mSensorInfo.name, "VX6953")) ) {
@@ -6229,7 +6230,7 @@ status_t QualcommCameraHardware::setSelectableZoneAf(const CameraParameters& par
 status_t QualcommCameraHardware::setTouchAfAec(const CameraParameters& params)
 {
     /* Don't know the AEC_ROI_* values */
-    if((!strcmp(sensorType->name, "5mp"))) {
+    if((!strcmp(sensorType->name, "5mp_triumph"))) {
         LOGI("Parameter TouchAfAec is not supported for this sensor");
         return NO_ERROR;
     }
@@ -6370,7 +6371,7 @@ status_t QualcommCameraHardware::setSceneDetect(const CameraParameters& params)
     bool retParm1, retParm2;
     if (supportsSceneDetection()) {
         if((!strcmp(sensorType->name, "2mp")) ||
-	   (!strcmp(sensorType->name, "5mp")) ||
+	   (!strcmp(sensorType->name, "5mp_triumph")) ||
 	   (!strcmp(sensorType->name, "ov7692"))) {
             LOGI("Parameter Auto Scene Detection is not supported for this sensor");
             return NO_ERROR;
@@ -6408,7 +6409,7 @@ status_t QualcommCameraHardware::setSceneDetect(const CameraParameters& params)
 status_t QualcommCameraHardware::setSceneMode(const CameraParameters& params)
 {
     if((!strcmp(sensorType->name, "2mp")) ||
-       (!strcmp(sensorType->name, "5mp")) ||
+       (!strcmp(sensorType->name, "5mp_triumph")) ||
        (!strcmp(sensorType->name, "ov7692"))) {
         LOGI("Parameter Scenemode not supported for this sensor");
         return NO_ERROR;

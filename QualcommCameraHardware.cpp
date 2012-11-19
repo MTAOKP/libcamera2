@@ -4202,7 +4202,7 @@ status_t QualcommCameraHardware::setParameters(const CameraParameters& params)
         if ((rc = setJpegQuality(params)))  final_rc = rc;
         return final_rc;
     }
-#define CHECK_RESULT if (final_rc) { LOGV("Param set error at line %d", __LINE__); final_rc = NO_ERROR }
+#define CHECK_RESULT if (final_rc) { LOGV("Param set error at line %d", __LINE__); final_rc = NO_ERROR; }
 
     if ((rc = setPreviewSize(params))) final_rc = rc; CHECK_RESULT;
     if ((rc = setRecordSize(params)))  final_rc = rc; CHECK_RESULT;

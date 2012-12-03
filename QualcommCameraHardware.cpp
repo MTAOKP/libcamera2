@@ -3091,6 +3091,7 @@ bool QualcommCameraHardware::initPreview()
         mPreviewHeap.clear();
     }
 
+    LOGV("%s: Allocating mPreviewHeap", __FUNCTION__);
     mPrevHeapDeallocRunning = false;
     mPreviewHeap = new PmemPool(pmem_region,
                                 MemoryHeapBase::READ_ONLY | MemoryHeapBase::NO_CACHING,
@@ -3109,10 +3110,11 @@ bool QualcommCameraHardware::initPreview()
         LOGE("initPreview X: could not initialize Camera preview heap.");
         return false;
     }
-
+    LOGV("%s: Allocated mPreviewHeap", __FUNCTION__);
     if ((mCurrentTarget == TARGET_MSM7630 ) || (mCurrentTarget == TARGET_QSD8250) || (mCurrentTarget == TARGET_MSM8660)) {
 
         // Allocate video buffers after allocating preview buffers.
+        LOGV("%s: Initializing record", __FUNCTION__);
         bool status = initRecord();
         if(status != true) {
             LOGE("Failed to allocate video bufers");
@@ -3121,6 +3123,8 @@ bool QualcommCameraHardware::initPreview()
     }
 
     if (ret) {
+        LOGV("%s:Preparing buffers", __FUNCTION__);
+
         for (cnt = 0; cnt < kPreviewBufferCount; cnt++) {
             frames[cnt].fd = mPreviewHeap->mHeap->getHeapID();
             frames[cnt].buffer =
@@ -4898,7 +4902,7 @@ void QualcommCameraHardware::receivePreviewFrame(struct msm_frame *frame)
 
 void QualcommCameraHardware::receiveCameraStats(camstats_type stype, camera_preview_histogram_info* histinfo)
 {
-  //  LOGV("receiveCameraStats E");
+    LOGV("receiveCameraStats E");
 
     if (!mCameraRunning) {
         LOGE("ignoring stats callback--camera has been stopped");
@@ -4920,7 +4924,7 @@ void QualcommCameraHardware::receiveCameraStats(camstats_type stype, camera_prev
     }
     if(!mSendData) {
         mStatsWaitLock.unlock();
-     } else {
+    } else {
         mSendData = false;
         mCurrent = (mCurrent+1)%3;
     // The first element of the array will contain the maximum hist value provided by driver.
@@ -4932,8 +4936,8 @@ void QualcommCameraHardware::receiveCameraStats(camstats_type stype, camera_prev
         if (scb != NULL && (msgEnabled & CAMERA_MSG_STATS_DATA))
             scb(CAMERA_MSG_STATS_DATA, mStatHeap->mBuffers[mCurrent],
                 sdata);
-     }
-  //  LOGV("receiveCameraStats X");
+    }
+    LOGV("receiveCameraStats X");
 }
 
 bool QualcommCameraHardware::initRecord()
@@ -4981,10 +4985,11 @@ bool QualcommCameraHardware::initRecord()
     }
 
     if (mRecordHeap != NULL) {
-        LOGI("%s: Clearing previous mPreviewHeap", __FUNCTION__);
+        LOGI("%s: Clearing previous mRecordHeap", __FUNCTION__);
         mRecordHeap.clear();
     }
 
+    LOGV("%s: Creating mRecordHeap", __FUNCTION__);
     mRecordHeap = new PmemPool(pmem_region,
                                MemoryHeapBase::READ_ONLY | MemoryHeapBase::NO_CACHING,
                                 mCameraControlFd,
@@ -5002,6 +5007,7 @@ bool QualcommCameraHardware::initRecord()
         LOGE("initRecord X: could not initialize record heap.");
         return false;
     }
+    LOGV("%s: Created mRecordHeap", __FUNCTION__);
     for (int cnt = 0; cnt < kRecordBufferCount; cnt++) {
         recordframes[cnt].fd = mRecordHeap->mHeap->getHeapID();
         recordframes[cnt].buffer =
@@ -5017,6 +5023,7 @@ bool QualcommCameraHardware::initRecord()
 
     // initial setup : buffers 1,2,3 with kernel , 4 with camframe , 5,6,7,8 in free Q
     // flush the busy Q
+    LOGV("%s: Flushing busy Q", __FUNCTION__);
     cam_frame_flush_video();
 
     mVideoThreadWaitLock.lock();
@@ -5028,6 +5035,7 @@ bool QualcommCameraHardware::initRecord()
     mVideoThreadWaitLock.unlock();
 
     // flush free queue and add 5,6,7,8 buffers.
+    LOGV("%s: Flushing free Q", __FUNCTION__);
     LINK_cam_frame_flush_free_video();
     if(mVpeEnabled) {
         //If VPE is enabled, the VPE buffer shouldn't be added to Free Q initally.

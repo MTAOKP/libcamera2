@@ -20,6 +20,8 @@
 #define LOG_TAG "QualcommCameraHardware"
 #include <utils/Log.h>
 
+//#define DUMP_DIMENSIONS 1 /* to enable dimensions dump */
+
 #include "QualcommCameraHardware.h"
 
 #include <utils/Errors.h>
@@ -626,7 +628,8 @@ static const str_map scenedetect[] = {
     { CameraParameters::SCENE_DETECT_ON, TRUE },
 };
 
-static void dump_dimensions(cam_ctrl_dimension_t *t)
+#ifdef DUMP_DIMENSIONS
+static inline void dump_dimensions(cam_ctrl_dimension_t *t)
 {
 #define PRINT_VAL(_name) LOGV("\t" #_name ": %u", t->_name)
     LOGV("Dimensions dump:");
@@ -699,8 +702,8 @@ static void dump_dimensions(cam_ctrl_dimension_t *t)
 #ifdef RDI_SUPPORT
     PRINT_VAL(channel_interface_mask);
 #endif
-
 }
+#endif /* DUMP_DIMENSIONS */
 
 #define country_number (sizeof(country_numeric) / sizeof(country_map))
 /* TODO : setting dummy values as of now, need to query for correct
@@ -2677,11 +2680,13 @@ bool QualcommCameraHardware::native_set_parm(
     LOGV("%s: fd %d, type %d, length %d", __FUNCTION__,
          mCameraControlFd, type, length);
 
+#ifdef DUMP_DIMENSIONS
     if (type == 1) {
         cam_ctrl_dimension_t *t = (cam_ctrl_dimension_t *)value;
         LOGV("Before calling ioctl");
         dump_dimensions(t);
     }
+#endif
 
     if (ioctl(mCameraControlFd, MSM_CAM_IOCTL_CTRL_COMMAND, &ctrlCmd) < 0 ||
                 ctrlCmd.status != CAM_CTRL_SUCCESS) {
@@ -2690,11 +2695,15 @@ bool QualcommCameraHardware::native_set_parm(
              mCameraControlFd, type, length, ctrlCmd.status);
         return false;
     }
+
+#ifdef DUMP_DIMENSIONS
     if (type == 1) {
         cam_ctrl_dimension_t *t = (cam_ctrl_dimension_t *)value;
         LOGV("After calling ioctl");
         dump_dimensions(t);
     }
+#endif
+
     return true;
 }
 

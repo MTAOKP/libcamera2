@@ -3072,7 +3072,9 @@ bool QualcommCameraHardware::initPreview()
     // orig_picture_dx, and orig_picture_dy after this function call. We need to
     // keep it for jpeg_encoder_encode.
     //bool ret = native_set_parm(CAMERA_SET_PARM_DIMENSION,
-    //                           sizeof(cam_ctrl_dimension_t), &mDimension);
+    //                           sizeof(cam_ctrl_dimension_t), &mDimension)   
+    
+    bool ret = true;
 
     /* Hack: don't call native_set_parm */
     mDimension.thumbnail_width  = mDimension.ui_thumbnail_width;

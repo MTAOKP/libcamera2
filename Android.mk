@@ -9,7 +9,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= QualcommCameraHardware.cpp
-
+LOCAL_SRC_FILES += Overlay.cpp
 LOCAL_CFLAGS:= -DDLOPEN_LIBMMCAMERA=$(DLOPEN_LIBMMCAMERA)
 
 LOCAL_CFLAGS+= -DHW_ENCODE

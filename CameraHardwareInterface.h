@@ -20,7 +20,15 @@
 
 #include <binder/IMemory.h>
 #include <utils/RefBase.h>
-#include <surfaceflinger/ISurface.h>
+#ifdef ANDROID_ICS
+# include <surfaceflinger/ISurface.h>
+# define ALOGI LOGI
+# define ALOGE LOGE
+# define ALOGD LOGD
+# define ALOGV LOGV
+#else
+# include <gui/ISurface.h>
+#endif
 #include <camera/Camera.h>
 #include <camera/CameraParameters.h>
 
